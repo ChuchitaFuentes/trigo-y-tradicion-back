@@ -8,6 +8,7 @@ const connectDB =require('./config/db')
 
 // Importamos las rutas relacionadas con publicaciones
 const postRoutes = require('./routes/post.routes');
+const userRoutes = require('./routes/auth.routes')
 
 // Creamos la aplicación de Express, estás creando un objeto app que contiene todas las funciones necesarias para crear un servidor web, es como cuando creabamos un objeto.
 const app = express();
@@ -24,6 +25,6 @@ app.use(express.json());
 // Usamos las rutas de publicaciones bajo el path /posts, Le dice a Express que use un archivo de rutas bajo una URL
 // Todas las rutas definidas en postRoutes se ejecutarán con el prefijo /posts
 app.use('/posts', postRoutes); //rutas para publicaciones http://localhost:3000/posts
-
+app.use('/user', userRoutes); //rutas para publicaciones http://localhost:8085/user
 // Exportamos la aplicación configurada para usarla en index.js
 module.exports = app;

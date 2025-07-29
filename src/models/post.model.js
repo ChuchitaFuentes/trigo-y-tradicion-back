@@ -1,11 +1,9 @@
-//Este es un archivo temporal para probar con los datos
+const mongoose = require('mongoose');
+const postSchema = new mongoose.Schema ({
+        nombre:String, 
+        descripcion: String, 
+        precio:Number, 
+        categoria: String 
+});
 
-let posts = [
-    {   id:1, 
-        nombre:'Primer pan', 
-        descripcion: 'Es un pan con azucar y canela', 
-        precio:15, 
-        categoria: 'Dulce' }
-]
-
- module.exports = posts
+ module.exports = mongoose.model('Post', postSchema);

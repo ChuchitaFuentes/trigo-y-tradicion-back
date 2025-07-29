@@ -1,58 +1,42 @@
-/*Un controlador:
-Es una capa o archivo donde defines las funciones que responden a las peticiones HTTP (GET, POST, PUT, DELETE).
-Se encargan de la lógica: obtener datos, crear nuevos, actualizar, borrar, validar.
-Reciben req (request) y res (response) y envían respuestas al cliente.*/
-let posts = require('../models/post.model');
+const {post, request} =require('../app');
+const Post = require('../models/post.model');
 
 //Obtener todos los posts (GET)
-exports.getAllPost = (req, res) =>{
-    res.json(posts)
+exports.getAllPost = async(req, res) =>{
+    try {
+        const posts = await Post.find();
+        res.json(posts)
+    } catch (err) {
+        res.status(500).json({message: 'Error al obtener todos los los posts', error: err.message})
+    }
+}
+//Crear Post 
+exports.createPost = async(req,res) =>{
+    const post = new Post (req.body)
+        await post.save();
+    return res.status(201).json(post);
 }
 
 //Obtiene post por id
-exports.getPostById = (req,res) =>{
-    const id = parseInt(req.params.id);
-    const post = posts.find(p => p.id === id);
-    if (!post) return res.status(404).json({error: 'Post no encontrado'});
-    res.json(post);
-}
-
-//Crear Post 
-exports.createPost = (req,res) =>{
-    const newPost = {
-        id: Date.now(),
-        nombre: req.body.nombre,
-        descripcion: req.body.descripcion,
-        precio: req.body.precio,
-        categoria:req.body.categoria
-    };
-    posts.push(newPost);
-    return res.status(201).json(newPost);
+exports.getPostById = async (req,res) =>{
+    try {
+        const post = await Post.findById(req.params.id)
+        if (post) return res.json(post);
+        return res.status(401).json({message:'Producto no encontrado'})
+    } catch (err) {
+        return res.status(500).json({message:'Error al obtener el producto', error:err.message})
+    }
+    
 }
 
 //Actualiza datos de post por id
-exports.updatePost =(req,res)=>{
-    const id = parseInt(req.params.id);
-    const index = posts.findIndex(p => p.id === id);
-    if (index === -1) return res.status(404).json({error: 'Post no encontrado'});
-
-    posts[index] = {
-        ...posts[index], 
-        nombre: req.body.nombre,
-        descripcion: req.body.descripcion,
-        precio: req.body.precio,
-        categoria:req.body.categoria
-    };
-    return res.json(posts[index]);
+exports.updatePost = async(req,res)=>{
+    const updated =await Post.findByIdAndUpdate(req.params.id, req.body,{new:true});
+    return res.json(updated);
 }
 
 //Elimina un post por id
-exports.deletePost =(req, res) =>{
-    const id = parseInt(req.params.id);
-    const inicial = posts.length;
-    posts = posts.filter(p => p.id !== id)
-    if(posts.length === inicial) return res.status(404).json({error: 'Post no encontrado'});
-    //Actualizar el modulo donde esta nuestro arreglo de post
-    require('../models/post.model').splice(0,require('../models/post.model').length, ...posts);
-    return res.status(204).end()
+exports.deletePost = async(req, res) =>{
+     const deleted =await Post.findByIdAndDelete(req.params.id);
+    return res.json(deleted);
 }
