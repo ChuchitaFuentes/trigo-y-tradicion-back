@@ -2,14 +2,17 @@
 
 /*Estamos trayendo la herramienta principal que usaremos para construir el servidor web. Express nos da funciones para manejar rutas, peticiones y respuestas.*/
 const express = require('express');
-
+//El encargado de que otras aplicaciones se conecten
+const cors =require('cors');
+const connectDB =require('./config/db')
 
 // Importamos las rutas relacionadas con publicaciones
 const postRoutes = require('./routes/post.routes');
 
 // Creamos la aplicación de Express, estás creando un objeto app que contiene todas las funciones necesarias para crear un servidor web, es como cuando creabamos un objeto.
 const app = express();
-
+connectDB();
+app.use(cors()); //Permite que otros desarrollo se conecten con este servidor
 /* Middleware para poder leer el cuerpo de las peticiones en formato JSON, Middleware que convierte el body en un objeto JavaScript
 Un middleware es una función que intercepta las solicitudes antes de que lleguen a su destino. Puede hacer cosas como:
 Revisar si el cliente está autorizado.
